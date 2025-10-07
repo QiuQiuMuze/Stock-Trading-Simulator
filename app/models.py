@@ -3,8 +3,17 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
-class SessionResponse(BaseModel):
-    user_id: str = Field(..., description="Unique identifier for the simulated trading account")
+
+class AuthRequest(BaseModel):
+    username: str = Field(..., min_length=1, max_length=32)
+    password: str = Field(..., min_length=1, max_length=128)
+
+
+class AuthResponse(BaseModel):
+    user_id: str
+    username: str
+    token: str
+
 
 
 class HistoryPoint(BaseModel):
