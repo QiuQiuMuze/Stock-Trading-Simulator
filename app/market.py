@@ -177,6 +177,7 @@ class MarketClock:
             "label": label,
             "timestamp": now.isoformat(),
             "countdown": self._countdown(now, phase),
+            "force_open": self.force_open,
         }
 
     def _countdown(self, now: datetime, phase: MarketPhase) -> Optional[int]:
@@ -207,6 +208,9 @@ class MarketClock:
         if not self.is_trading_day(now.date()):
             return True
         return now.time() >= self.afternoon_close
+
+    def set_force_open(self, value: bool) -> None:
+        self.force_open = value
 
 
 @dataclass
@@ -256,6 +260,10 @@ class Market:
         self._day_opened: Optional[date] = None
         self._lock = asyncio.Lock()
         self.storage = storage
+
+    def set_force_open(self, value: bool) -> None:
+        self.clock.set_force_open(value)
+
     async def start(self) -> None:
         if not self._market_task:
             self._market_task = asyncio.create_task(self._run_market())

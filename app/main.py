@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import os
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, WebSocket, WebSocketDisconnect, status
@@ -11,6 +12,7 @@ from .market import Market
 from .models import (
     AuthRequest,
     AuthResponse,
+    MarketModeRequest,
     MarketSnapshot,
     PortfolioView,
     StockView,
@@ -25,6 +27,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 storage = Storage()
 market = Market(storage=storage)
+ADMIN_TOKEN = os.getenv("ADMIN_API_TOKEN")
 
 
 @app.on_event("startup")
@@ -77,6 +80,12 @@ async def get_current_session(x_session_token: Optional[str] = Header(default=No
         raise HTTPException(status_code=404, detail="未找到对应的模拟账户") from exc
     return user_id, x_session_token
 
+
+def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> None:
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="未配置后台访问令牌")
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="后台令牌无效")
 
 @app.post("/api/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 async def register(payload: AuthRequest) -> AuthResponse:
@@ -174,3 +183,9 @@ async def logout(session: tuple[str, str] = Depends(get_current_session)) -> Res
     _, token = session
     storage.delete_session(token)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.post("/api/admin/market/mode")
+async def set_market_mode(payload: MarketModeRequest, _: None = Depends(require_admin)) -> dict[str, object]:
+    market.set_force_open(payload.force_open)
+    status_snapshot = market.clock.status()
+    return {"force_open": market.clock.force_open, "market_status": status_snapshot}

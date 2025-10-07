@@ -39,12 +39,17 @@ class MarketStatus(BaseModel):
     label: str
     timestamp: str
     countdown: Optional[int]
+    force_open: bool
 
 
 class MarketSnapshot(BaseModel):
     timestamp: str
     market_status: MarketStatus
     stocks: List[StockView]
+
+
+class MarketModeRequest(BaseModel):
+    force_open: bool
 
 
 class PortfolioHolding(BaseModel):
