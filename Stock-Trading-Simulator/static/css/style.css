@@ -1,0 +1,245 @@
+:root {
+  --bg-color: #0c1626;
+  --panel-bg: #16213c;
+  --accent: #f39c12;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9aa5b1;
+  --red-up: #ff4d4f;
+  --green-down: #13ce66;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #1f2a48 0%, #111a2c 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 0.08em;
+}
+
+.market-status {
+  text-align: right;
+}
+
+.market-status .label {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.2rem;
+}
+
+.market-status .countdown {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1.8fr 1.8fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem 3rem;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.stock-list table,
+.portfolio-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.stock-list thead th,
+.portfolio-table thead th {
+  text-align: left;
+  color: var(--text-secondary);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stock-list tbody tr,
+.portfolio-table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.stock-list tbody tr:hover,
+.portfolio-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stock-list tbody tr.selected {
+  background: rgba(255, 77, 79, 0.15);
+}
+
+.stock-list tbody td,
+.portfolio-table tbody td {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.stock-list tbody td.numeric,
+.portfolio-table tbody td.numeric {
+  text-align: right;
+}
+
+.price-up {
+  color: var(--red-up);
+}
+
+.price-down {
+  color: var(--green-down);
+}
+
+.chart-panel {
+  align-items: center;
+}
+
+.chart-panel canvas {
+  width: 100% !important;
+  height: 360px !important;
+}
+
+.trade-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.trade-panel label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.trade-panel select,
+.trade-panel input {
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.trade-panel input:focus,
+.trade-panel select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.trade-panel .primary {
+  padding: 0.6rem 0.8rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff7b00, #ff5400);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.trade-panel .primary:hover {
+  transform: translateY(-1px);
+}
+
+.form-feedback {
+  min-height: 1.2rem;
+  font-size: 0.85rem;
+}
+
+.form-feedback.error {
+  color: var(--red-up);
+}
+
+.form-feedback.success {
+  color: var(--green-down);
+}
+
+.portfolio {
+  margin-top: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.portfolio .balances {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.portfolio-table tbody td {
+  font-size: 0.85rem;
+}
+
+.history {
+  margin-top: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history li {
+  padding: 0.35rem 0;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app-footer {
+  text-align: center;
+  padding: 1rem 0 2rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-panel canvas {
+    height: 300px !important;
+  }
+}
