@@ -2,7 +2,6 @@ import asyncio
 import contextlib
 import os
 import random
-
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
@@ -11,10 +10,8 @@ from typing import Deque, Dict, List, Optional
 
 import pytz
 
-
 from .data.stocks import CSI300_CONSTITUENTS
 from .storage import Storage
-
 
 
 class MarketPhase(Enum):
@@ -246,9 +243,7 @@ class Portfolio:
 
 
 class Market:
-
     def __init__(self, storage: Storage) -> None:
-
         speed = float(os.getenv("SIMULATION_SPEED", "1.0"))
         tick_seconds = float(os.getenv("MARKET_TICK_SECONDS", "2.0"))
         force_open = os.getenv("FORCE_MARKET_OPEN", "0") == "1"
@@ -260,10 +255,7 @@ class Market:
         self._current_phase: Optional[MarketPhase] = None
         self._day_opened: Optional[date] = None
         self._lock = asyncio.Lock()
-
         self.storage = storage
-
-
     async def start(self) -> None:
         if not self._market_task:
             self._market_task = asyncio.create_task(self._run_market())
@@ -336,7 +328,6 @@ class Market:
             "stocks": [stock.to_dict() for stock in self.stocks.values()],
         }
 
-
     def get_stock(self, symbol: str) -> Optional[Dict[str, object]]:
         key = symbol.upper()
         stock = self.stocks.get(key)
@@ -345,7 +336,6 @@ class Market:
         return stock.to_dict()
 
     def _seed_stocks(self) -> Dict[str, Stock]:
-
         stocks: Dict[str, Stock] = {}
         for entry in CSI300_CONSTITUENTS:
             symbol = entry["symbol"]
@@ -370,12 +360,10 @@ class Market:
                 positions=dict(portfolio_data["positions"]),
                 trade_history=list(portfolio_data["history"]),
             )
-
         self.accounts[user_id] = account
         return account
 
     def get_account(self, user_id: str) -> Portfolio:
-
         return self.ensure_account(user_id)
 
     def portfolio_view(self, user_id: str) -> Dict[str, object]:
@@ -385,10 +373,8 @@ class Market:
     def execute_trade(self, user_id: str, symbol: str, quantity: int, side: str) -> Dict[str, object]:
         if quantity <= 0:
             raise ValueError("Quantity must be positive")
-
         if side == "buy" and quantity % 100 != 0:
             raise ValueError("买入数量必须为100股的整数倍")
-
         account = self.get_account(user_id)
         stock = self.stocks.get(symbol)
         if not stock:
@@ -419,12 +405,10 @@ class Market:
         else:
             raise ValueError("Unsupported side")
         account.trade_history.append(trade_record)
-
         if len(account.trade_history) > 200:
             account.trade_history[:] = account.trade_history[-200:]
         self.storage.persist_portfolio(account.user_id, account.cash, account.positions)
         self.storage.record_trade(account.user_id, trade_record)
-
         return {
             "result": "success",
             "trade": trade_record,
