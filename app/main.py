@@ -11,7 +11,16 @@ from fastapi.templating import Jinja2Templates
 
 from .market import Market
 
-from .models import AuthRequest, AuthResponse, MarketSnapshot, PortfolioView, TradeRequest, TradeResponse
+from .models import (
+    AuthRequest,
+    AuthResponse,
+    MarketSnapshot,
+    PortfolioView,
+    StockView,
+    TradeRequest,
+    TradeResponse,
+)
+
 from .storage import AuthenticationError, Storage, UserAlreadyExists
 
 app = FastAPI(title="股票模拟交易平台", version="0.2.0")
@@ -34,8 +43,30 @@ async def on_shutdown() -> None:
 
 
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse("index.html", {"request": request})
+
+async def login_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
+@app.get("/app", response_class=HTMLResponse)
+async def app_page(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse("app.html", {"request": request})
+
+
+@app.get("/stocks/{symbol}", response_class=HTMLResponse)
+async def stock_page(symbol: str, request: Request) -> HTMLResponse:
+    stock = market.get_stock(symbol)
+    if not stock:
+        raise HTTPException(status_code=404, detail="未找到对应的股票")
+    return templates.TemplateResponse(
+        "stock_detail.html",
+        {"request": request, "symbol": stock["symbol"], "name": stock["name"]},
+    )
 
 
 
@@ -92,8 +123,16 @@ async def list_stocks() -> MarketSnapshot:
     return MarketSnapshot.parse_obj(market.snapshot())
 
 
-@app.get("/api/portfolio", response_model=PortfolioView)
 
+@app.get("/api/stocks/{symbol}", response_model=StockView)
+async def get_stock(symbol: str) -> StockView:
+    stock = market.get_stock(symbol)
+    if not stock:
+        raise HTTPException(status_code=404, detail="未找到对应的股票")
+    return StockView.parse_obj(stock)
+
+
+@app.get("/api/portfolio", response_model=PortfolioView)
 async def get_portfolio(session: tuple[str, str] = Depends(get_current_session)) -> PortfolioView:
     user_id, _ = session
 
@@ -147,4 +186,3 @@ async def logout(session: tuple[str, str] = Depends(get_current_session)) -> Res
     _, token = session
     storage.delete_session(token)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-

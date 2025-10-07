@@ -336,6 +336,14 @@ class Market:
             "stocks": [stock.to_dict() for stock in self.stocks.values()],
         }
 
+
+    def get_stock(self, symbol: str) -> Optional[Dict[str, object]]:
+        key = symbol.upper()
+        stock = self.stocks.get(key)
+        if not stock:
+            return None
+        return stock.to_dict()
+
     def _seed_stocks(self) -> Dict[str, Stock]:
 
         stocks: Dict[str, Stock] = {}
