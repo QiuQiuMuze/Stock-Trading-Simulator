@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>中国股市模拟交易平台</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" defer></script>
+    <script src="/static/js/app.js" type="module" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>中国股市模拟交易平台</h1>
+      <div class="market-status" id="market-status">
+        <span class="label">休市</span>
+        <span class="countdown"></span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel stock-list">
+        <h2>行情中心</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>代码</th>
+              <th>名称</th>
+              <th>最新价</th>
+              <th>涨跌幅</th>
+              <th>最高</th>
+              <th>最低</th>
+            </tr>
+          </thead>
+          <tbody id="stock-table"></tbody>
+        </table>
+      </section>
+
+      <section class="panel chart-panel">
+        <h2 id="chart-title">走势</h2>
+        <canvas id="price-chart" width="400" height="280"></canvas>
+      </section>
+
+      <section class="panel trade-panel">
+        <h2>交易面板</h2>
+        <form id="trade-form">
+          <label>
+            股票代码
+            <select id="trade-symbol"></select>
+          </label>
+          <label>
+            买卖方向
+            <select id="trade-side">
+              <option value="buy">买入</option>
+              <option value="sell">卖出</option>
+            </select>
+          </label>
+          <label>
+            数量（股）
+            <input type="number" id="trade-quantity" min="1" step="100" value="100" />
+          </label>
+          <button type="submit" class="primary">提交交易</button>
+          <p class="form-feedback" id="trade-feedback"></p>
+        </form>
+
+        <div class="portfolio">
+          <h3>我的资产</h3>
+          <div class="balances">
+            <div>可用资金：<span id="cash-balance">--</span> 元</div>
+            <div>资产总值：<span id="total-value">--</span> 元</div>
+          </div>
+          <table class="portfolio-table">
+            <thead>
+              <tr>
+                <th>代码</th>
+                <th>名称</th>
+                <th>持仓</th>
+                <th>市值</th>
+              </tr>
+            </thead>
+            <tbody id="portfolio-table"></tbody>
+          </table>
+          <div class="history">
+            <h4>最近交易</h4>
+            <ul id="trade-history"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>模拟规则参考中国A股涨跌停幅度 ±10%（创业板/科创板未区分），仅供教学体验使用。</p>
+    </footer>
+  </body>
+</html>
