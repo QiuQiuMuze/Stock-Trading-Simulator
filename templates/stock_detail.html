@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ symbol }} {{ name }} - 个股行情</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" defer></script>
+    <script src="/static/js/app.js" type="module" defer></script>
+  </head>
+  <body data-page="stock-detail" data-symbol="{{ symbol }}" data-name="{{ name }}">
+    <header class="app-header">
+      <div class="header-left">
+        <h1>{{ symbol }} {{ name }}</h1>
+        <div class="market-status" id="market-status">
+          <span class="label">休市</span>
+          <span class="countdown"></span>
+        </div>
+      </div>
+      <nav class="header-actions">
+        <a href="/app">行情列表</a>
+        <a href="/stocks/{{ symbol }}" class="active">个股详情</a>
+        <div class="user-info">
+          <span id="user-name"></span>
+          <button type="button" class="secondary" id="logout-btn">退出登录</button>
+        </div>
+      </nav>
+    </header>
+    <main class="detail-layout">
+      <section class="panel detail-overview">
+        <div class="detail-price">
+          <div class="price-line">
+            <span class="price" id="detail-price">--</span>
+            <span class="change" id="detail-change">--</span>
+          </div>
+          <div class="range">
+            <span>今开 <strong id="detail-open">--</strong></span>
+            <span>昨收 <strong id="detail-prev-close">--</strong></span>
+            <span>最高 <strong id="detail-high">--</strong></span>
+            <span>最低 <strong id="detail-low">--</strong></span>
+            <span>涨停 <strong id="detail-limit-up">--</strong></span>
+            <span>跌停 <strong id="detail-limit-down">--</strong></span>
+          </div>
+        </div>
+        <div class="detail-holding">
+          <div>可用资金：<strong id="detail-cash">--</strong> 元</div>
+          <div>持仓数量：<strong id="detail-holding-qty">--</strong> 股</div>
+          <div>持仓市值：<strong id="detail-holding-value">--</strong> 元</div>
+        </div>
+      </section>
+      <section class="panel chart-panel">
+        <h2>价格走势</h2>
+        <div class="chart-wrapper">
+          <canvas id="stock-chart"></canvas>
+        </div>
+      </section>
+      <section class="panel detail-trade">
+        <h2>快速交易</h2>
+        <form id="detail-trade-form">
+          <fieldset>
+            <div class="field-group">
+              <label>股票代码</label>
+              <div class="static-symbol">{{ symbol }} {{ name }}</div>
+            </div>
+            <label>
+              买卖方向
+              <select id="detail-trade-side">
+                <option value="buy">买入</option>
+                <option value="sell">卖出</option>
+              </select>
+            </label>
+            <label>
+              数量（股）
+              <input type="number" id="detail-trade-quantity" min="1" step="100" value="100" />
+            </label>
+            <button type="submit" class="primary">提交交易</button>
+          </fieldset>
+          <p class="form-feedback" id="detail-trade-feedback"></p>
+        </form>
+      </section>
+    </main>
+    <footer class="app-footer">
+      <p>行情数据为模拟生成，仅供参考。</p>
+    </footer>
+  </body>
+</html>

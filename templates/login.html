@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录 - 中国股市模拟交易平台</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/app.js" type="module" defer></script>
+  </head>
+  <body data-page="login">
+    <header class="auth-header">
+      <h1>中国股市模拟交易平台</h1>
+      <p>实时行情、模拟撮合与沪深 A 股规则同步</p>
+    </header>
+    <main class="auth-layout">
+      <section class="auth-card">
+        <h2>登录账户</h2>
+        <p class="auth-tip">请输入注册时设置的用户名与密码。</p>
+        <form id="login-form" class="auth-form">
+          <label>
+            用户名
+            <input type="text" id="login-username" autocomplete="username" required />
+          </label>
+          <label>
+            密码
+            <input type="password" id="login-password" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="primary">登录</button>
+          <p class="form-feedback" id="login-feedback"></p>
+        </form>
+        <p class="auth-switch">
+          还没有账号？<a href="/register">立即注册</a>
+        </p>
+      </section>
+      <aside class="auth-cta">
+        <h3>新功能</h3>
+        <ul>
+          <li>CSI300 全量成分股，行情一览</li>
+          <li>单点行情页，查看个股走势</li>
+          <li>支持异地登录挤出机制</li>
+        </ul>
+      </aside>
+    </main>
+    <div id="flash-container" class="flash-container hidden">
+      <p id="flash-message"></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注册 - 中国股市模拟交易平台</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/app.js" type="module" defer></script>
+  </head>
+  <body data-page="register">
+    <header class="auth-header">
+      <h1>中国股市模拟交易平台</h1>
+      <p>新用户注册后立即获得 100,000 元模拟资金</p>
+    </header>
+    <main class="auth-layout">
+      <section class="auth-card">
+        <h2>创建新账户</h2>
+        <p class="auth-tip">用户名需唯一，密码至少 1 个字符。</p>
+        <form id="register-form" class="auth-form">
+          <label>
+            用户名
+            <input type="text" id="register-username" autocomplete="username" required />
+          </label>
+          <label>
+            密码
+            <input type="password" id="register-password" autocomplete="new-password" required />
+          </label>
+          <button type="submit" class="primary">注册并登录</button>
+          <p class="form-feedback" id="register-feedback"></p>
+        </form>
+        <p class="auth-switch">
+          已有账号？<a href="/">返回登录</a>
+        </p>
+      </section>
+      <aside class="auth-cta">
+        <h3>注册后可用功能</h3>
+        <ul>
+          <li>实时行情推送与涨跌颜色提示</li>
+          <li>单账户多端互斥登录</li>
+          <li>历史成交与持仓管理</li>
+        </ul>
+      </aside>
+    </main>
+    <div id="flash-container" class="flash-container hidden">
+      <p id="flash-message"></p>
+    </div>
+  </body>
+</html>
