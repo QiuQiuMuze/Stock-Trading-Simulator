@@ -2,12 +2,15 @@ import asyncio
 import contextlib
 from typing import Optional
 
+
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import HTMLResponse, Response
+
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .market import Market
+
 from .models import (
     AuthRequest,
     AuthResponse,
@@ -17,6 +20,7 @@ from .models import (
     TradeRequest,
     TradeResponse,
 )
+
 from .storage import AuthenticationError, Storage, UserAlreadyExists
 
 app = FastAPI(title="股票模拟交易平台", version="0.2.0")
@@ -25,6 +29,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 storage = Storage()
 market = Market(storage=storage)
+
 
 
 @app.on_event("startup")
@@ -38,6 +43,7 @@ async def on_shutdown() -> None:
 
 
 @app.get("/", response_class=HTMLResponse)
+
 async def login_page(request: Request) -> HTMLResponse:
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -61,6 +67,7 @@ async def stock_page(symbol: str, request: Request) -> HTMLResponse:
         "stock_detail.html",
         {"request": request, "symbol": stock["symbol"], "name": stock["name"]},
     )
+
 
 
 async def get_current_session(x_session_token: Optional[str] = Header(default=None)) -> tuple[str, str]:
@@ -116,6 +123,7 @@ async def list_stocks() -> MarketSnapshot:
     return MarketSnapshot.parse_obj(market.snapshot())
 
 
+
 @app.get("/api/stocks/{symbol}", response_model=StockView)
 async def get_stock(symbol: str) -> StockView:
     stock = market.get_stock(symbol)
@@ -127,13 +135,16 @@ async def get_stock(symbol: str) -> StockView:
 @app.get("/api/portfolio", response_model=PortfolioView)
 async def get_portfolio(session: tuple[str, str] = Depends(get_current_session)) -> PortfolioView:
     user_id, _ = session
+
     return PortfolioView.parse_obj(market.portfolio_view(user_id))
 
 
 @app.post("/api/trade", response_model=TradeResponse)
+
 async def trade(request: TradeRequest, session: tuple[str, str] = Depends(get_current_session)) -> TradeResponse:
     try:
         user_id, _ = session
+
         result = market.execute_trade(user_id=user_id, symbol=request.symbol, quantity=request.quantity, side=request.side)
         return TradeResponse.parse_obj(result)
     except ValueError as exc:  # business rule violation
@@ -167,6 +178,7 @@ async def _consume(queue: asyncio.Queue, websocket: WebSocket) -> None:
             await websocket.send_json(snapshot)
     except asyncio.CancelledError:
         return
+
 
 
 @app.post("/api/logout", status_code=status.HTTP_204_NO_CONTENT)

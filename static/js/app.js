@@ -1,3 +1,4 @@
+
 const STORAGE = window.sessionStorage;
 const STORAGE_KEYS = {
   userId: 'sim-trader-id',
@@ -204,6 +205,7 @@ function persistSession(data) {
   STORAGE.setItem(STORAGE_KEYS.userId, data.user_id);
   STORAGE.setItem(STORAGE_KEYS.username, data.username);
   STORAGE.setItem(STORAGE_KEYS.token, data.token);
+
 }
 
 function clearStoredSession() {
@@ -211,6 +213,7 @@ function clearStoredSession() {
   STORAGE.removeItem(STORAGE_KEYS.username);
   STORAGE.removeItem(STORAGE_KEYS.token);
 }
+
 
 async function fetchProfile(token) {
   const response = await fetch('/api/profile', {
@@ -456,20 +459,24 @@ function renderStockList() {
       window.location.href = `/stocks/${stock.symbol}`;
     });
     container.appendChild(row);
+
   });
 }
 
 function updateSymbolOptions() {
   const select = document.getElementById('trade-symbol');
+
   if (!select) return;
   const current = select.value;
   select.innerHTML = '';
   appState.stocks.forEach((stock) => {
+
     const option = document.createElement('option');
     option.value = stock.symbol;
     option.textContent = `${stock.symbol} - ${stock.name}`;
     select.appendChild(option);
   });
+
   if (current && appState.stocks.some((stock) => stock.symbol === current)) {
     select.value = current;
   }
@@ -515,28 +522,34 @@ function updateDetailChart(stock) {
   if (!appState.chart) {
     if (typeof Chart === 'undefined') return;
     appState.chart = new Chart(ctx, {
+
       type: 'line',
       data: {
         labels,
         datasets: [
           {
+
             label: `${stock.symbol} 价格`,
             data,
             borderColor: '#f39c12',
             backgroundColor: 'rgba(243, 156, 18, 0.12)',
             borderWidth: 2,
             tension: 0.15,
+
             pointRadius: 0,
           },
         ],
       },
       options: {
+
         responsive: true,
         maintainAspectRatio: false,
+
         scales: {
           x: {
             type: 'time',
             time: {
+
               tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
             },
             ticks: {
@@ -544,14 +557,17 @@ function updateDetailChart(stock) {
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.08)',
+
             },
           },
           y: {
             ticks: {
+
               color: '#cbd5f5',
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.08)',
+
             },
           },
         },
@@ -565,6 +581,7 @@ function updateDetailChart(stock) {
       },
     });
   } else {
+
     appState.chart.data.labels = labels;
     appState.chart.data.datasets[0].data = data;
     appState.chart.update('none');
@@ -659,6 +676,7 @@ function renderPortfolio(portfolio) {
       if (valueEl) valueEl.textContent = '0.00';
     }
   }
+
 }
 
 function formatTimestamp(timestamp) {
@@ -671,6 +689,7 @@ function formatTimestamp(timestamp) {
   const ss = String(date.getSeconds()).padStart(2, '0');
   return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
+
 
 function setFeedback(element, message, isError = false) {
   if (!element) return;
@@ -745,3 +764,4 @@ function displayFlashMessage() {
     container.classList.add('hidden');
   }, 4000);
 }
+
