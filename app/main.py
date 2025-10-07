@@ -87,7 +87,6 @@ def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> None:
     if x_admin_token != ADMIN_TOKEN:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="后台令牌无效")
 
-
 @app.post("/api/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 async def register(payload: AuthRequest) -> AuthResponse:
     try:
@@ -184,7 +183,6 @@ async def logout(session: tuple[str, str] = Depends(get_current_session)) -> Res
     _, token = session
     storage.delete_session(token)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
 
 @app.post("/api/admin/market/mode")
 async def set_market_mode(payload: MarketModeRequest, _: None = Depends(require_admin)) -> dict[str, object]:
