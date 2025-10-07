@@ -572,7 +572,6 @@ form select:focus {
   width: 100% !important;
   height: 100% !important;
 }
-
 .detail-trade .field-group {
   display: flex;
   flex-direction: column;
