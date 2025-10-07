@@ -689,7 +689,6 @@ function formatTimestamp(timestamp) {
   const ss = String(date.getSeconds()).padStart(2, '0');
   return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
-
 function setFeedback(element, message, isError = false) {
   if (!element) return;
   element.textContent = message;

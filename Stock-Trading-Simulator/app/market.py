@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import os
 import random
+import uuid
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
@@ -9,9 +10,6 @@ from enum import Enum
 from typing import Deque, Dict, List, Optional
 
 import pytz
-
-from .data.stocks import CSI300_CONSTITUENTS
-from .storage import Storage
 
 
 class MarketPhase(Enum):
@@ -243,7 +241,7 @@ class Portfolio:
 
 
 class Market:
-    def __init__(self, storage: Storage) -> None:
+    def __init__(self) -> None:
         speed = float(os.getenv("SIMULATION_SPEED", "1.0"))
         tick_seconds = float(os.getenv("MARKET_TICK_SECONDS", "2.0"))
         force_open = os.getenv("FORCE_MARKET_OPEN", "0") == "1"
@@ -255,7 +253,7 @@ class Market:
         self._current_phase: Optional[MarketPhase] = None
         self._day_opened: Optional[date] = None
         self._lock = asyncio.Lock()
-        self.storage = storage
+
     async def start(self) -> None:
         if not self._market_task:
             self._market_task = asyncio.create_task(self._run_market())
@@ -328,56 +326,58 @@ class Market:
             "stocks": [stock.to_dict() for stock in self.stocks.values()],
         }
 
-    def get_stock(self, symbol: str) -> Optional[Dict[str, object]]:
-        key = symbol.upper()
-        stock = self.stocks.get(key)
-        if not stock:
-            return None
-        return stock.to_dict()
-
     def _seed_stocks(self) -> Dict[str, Stock]:
+        companies = [
+            ("ALIB", "阿里巴巴集团"),
+            ("TENC", "腾讯控股"),
+            ("BIDU", "百度科技"),
+            ("JD", "京东集团"),
+            ("PDD", "拼多多"),
+            ("MEIT", "美团点评"),
+            ("BYD", "比亚迪"),
+            ("NIO", "蔚来汽车"),
+            ("XPEV", "小鹏汽车"),
+            ("LI", "理想汽车"),
+            ("ICBC", "中国工商银行"),
+            ("CCB", "中国建设银行"),
+            ("ABC", "中国农业银行"),
+            ("BOC", "中国银行"),
+            ("PING", "中国平安"),
+            ("CITS", "中信证券"),
+            ("HAIR", "海尔智家"),
+            ("MIDE", "美的集团"),
+            ("GREE", "格力电器"),
+            ("TSMC", "台积电"),
+            ("SMIC", "中芯国际"),
+        ]
+        random.shuffle(companies)
+        stock_count = random.randint(10, 20)
+        selections = companies[:stock_count]
         stocks: Dict[str, Stock] = {}
-        for entry in CSI300_CONSTITUENTS:
-            symbol = entry["symbol"]
-            name = entry["name"]
-            seeded_rng = random.Random(symbol)
-            base_price = round(seeded_rng.uniform(8, 300), 2)
-            stocks[symbol] = Stock(symbol=symbol, name=name, previous_close=base_price)
-        return stocks
+        for symbol, name in selections:
+            base_price = random.uniform(8, 180)
+            stocks[symbol] = Stock(symbol=symbol, name=name, previous_close=round(base_price, 2))
+        return dict(sorted(stocks.items()))
 
-    def ensure_account(self, user_id: str) -> Portfolio:
-        if user_id in self.accounts:
-            return self.accounts[user_id]
-        if not self.storage.user_exists(user_id):
-            raise KeyError("Account not found")
-        portfolio_data = self.storage.load_portfolio(user_id)
-        if not portfolio_data:
-            account = Portfolio(user_id=user_id)
-        else:
-            account = Portfolio(
-                user_id=user_id,
-                cash=portfolio_data["cash"],
-                positions=dict(portfolio_data["positions"]),
-                trade_history=list(portfolio_data["history"]),
-            )
+    def create_account(self) -> Portfolio:
+        user_id = uuid.uuid4().hex
+        account = Portfolio(user_id=user_id)
         self.accounts[user_id] = account
         return account
 
     def get_account(self, user_id: str) -> Portfolio:
-        return self.ensure_account(user_id)
+        account = self.accounts.get(user_id)
+        if not account:
+            raise KeyError("Account not found")
+        return account
 
     def portfolio_view(self, user_id: str) -> Dict[str, object]:
         account = self.get_account(user_id)
         return account.to_view(self.stocks)
 
     def execute_trade(self, user_id: str, symbol: str, quantity: int, side: str) -> Dict[str, object]:
-        phase = self.clock.phase()
-        if not phase.is_trading:
-            raise ValueError("当前为休市时间，无法进行交易")
         if quantity <= 0:
             raise ValueError("Quantity must be positive")
-        if side == "buy" and quantity % 100 != 0:
-            raise ValueError("买入数量必须为100股的整数倍")
         account = self.get_account(user_id)
         stock = self.stocks.get(symbol)
         if not stock:
@@ -408,10 +408,6 @@ class Market:
         else:
             raise ValueError("Unsupported side")
         account.trade_history.append(trade_record)
-        if len(account.trade_history) > 200:
-            account.trade_history[:] = account.trade_history[-200:]
-        self.storage.persist_portfolio(account.user_id, account.cash, account.positions)
-        self.storage.record_trade(account.user_id, trade_record)
         return {
             "result": "success",
             "trade": trade_record,
