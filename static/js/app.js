@@ -239,6 +239,7 @@ function renderPortfolio(portfolio) {
 
 function setupTradeForm() {
   const form = document.getElementById('trade-form');
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!state.userId) return;
@@ -249,11 +250,14 @@ function setupTradeForm() {
     feedback.textContent = '';
     feedback.classList.remove('error', 'success');
 
+
     if (!quantity || quantity <= 0) {
+
       feedback.textContent = '请输入正确的交易数量';
       feedback.classList.add('error');
       return;
     }
+
 
     try {
       const response = await fetch('/api/trade', {
