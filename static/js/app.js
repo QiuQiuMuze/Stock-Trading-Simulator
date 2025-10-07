@@ -214,7 +214,6 @@ function clearStoredSession() {
   STORAGE.removeItem(STORAGE_KEYS.token);
 }
 
-
 async function fetchProfile(token) {
   const response = await fetch('/api/profile', {
     headers: { 'X-Session-Token': token },
@@ -459,24 +458,20 @@ function renderStockList() {
       window.location.href = `/stocks/${stock.symbol}`;
     });
     container.appendChild(row);
-
   });
 }
 
 function updateSymbolOptions() {
   const select = document.getElementById('trade-symbol');
-
   if (!select) return;
   const current = select.value;
   select.innerHTML = '';
   appState.stocks.forEach((stock) => {
-
     const option = document.createElement('option');
     option.value = stock.symbol;
     option.textContent = `${stock.symbol} - ${stock.name}`;
     select.appendChild(option);
   });
-
   if (current && appState.stocks.some((stock) => stock.symbol === current)) {
     select.value = current;
   }
@@ -519,37 +514,37 @@ function updateDetailChart(stock) {
   if (!ctx) return;
   const labels = stock.history.map((point) => new Date(point.timestamp));
   const data = stock.history.map((point) => point.price);
+  const minPrice = Math.min(...data);
+  const maxPrice = Math.max(...data);
+  const range = maxPrice - minPrice;
+  const padding = range === 0 ? Math.max(maxPrice * 0.02, 0.5) : range * 0.1;
+  const suggestedMin = Math.max(0, minPrice - padding);
+  const suggestedMax = maxPrice + padding;
   if (!appState.chart) {
     if (typeof Chart === 'undefined') return;
     appState.chart = new Chart(ctx, {
-
       type: 'line',
       data: {
         labels,
         datasets: [
           {
-
             label: `${stock.symbol} 价格`,
             data,
             borderColor: '#f39c12',
             backgroundColor: 'rgba(243, 156, 18, 0.12)',
             borderWidth: 2,
             tension: 0.15,
-
             pointRadius: 0,
           },
         ],
       },
       options: {
-
         responsive: true,
         maintainAspectRatio: false,
-
         scales: {
           x: {
             type: 'time',
             time: {
-
               tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
             },
             ticks: {
@@ -557,17 +552,17 @@ function updateDetailChart(stock) {
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.08)',
-
             },
           },
           y: {
+            beginAtZero: false,
+            min: suggestedMin,
+            max: suggestedMax,
             ticks: {
-
               color: '#cbd5f5',
             },
             grid: {
               color: 'rgba(255, 255, 255, 0.08)',
-
             },
           },
         },
@@ -581,9 +576,14 @@ function updateDetailChart(stock) {
       },
     });
   } else {
-
     appState.chart.data.labels = labels;
     appState.chart.data.datasets[0].data = data;
+    const yScale = appState.chart.options?.scales?.y;
+    if (yScale) {
+      yScale.beginAtZero = false;
+      yScale.min = suggestedMin;
+      yScale.max = suggestedMax;
+    }
     appState.chart.update('none');
   }
 }
@@ -676,7 +676,6 @@ function renderPortfolio(portfolio) {
       if (valueEl) valueEl.textContent = '0.00';
     }
   }
-
 }
 
 function formatTimestamp(timestamp) {
@@ -689,8 +688,6 @@ function formatTimestamp(timestamp) {
   const ss = String(date.getSeconds()).padStart(2, '0');
   return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
-
-
 function setFeedback(element, message, isError = false) {
   if (!element) return;
   element.textContent = message;
@@ -764,4 +761,3 @@ function displayFlashMessage() {
     container.classList.add('hidden');
   }, 4000);
 }
-
