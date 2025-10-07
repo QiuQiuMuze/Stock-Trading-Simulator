@@ -23,22 +23,11 @@ body {
 .app-header {
   display: flex;
   justify-content: space-between;
-
-  align-items: flex-start;
-  gap: 2rem;
-
+  align-items: center;
   padding: 1.5rem 2rem;
   background: linear-gradient(135deg, #1f2a48 0%, #111a2c 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-
-.header-main {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
 
 .app-header h1 {
   margin: 0;
@@ -47,9 +36,8 @@ body {
 }
 
 .market-status {
-
-  text-align: left;
-
+  text-align: right;
+}
 
 .market-status .label {
   display: inline-block;
@@ -64,104 +52,6 @@ body {
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
-
-
-.auth-container {
-  display: flex;
-  align-items: stretch;
-  gap: 1.5rem;
-}
-
-.auth-form {
-  background: rgba(12, 22, 38, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  width: 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.auth-form h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.auth-form label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  gap: 0.35rem;
-}
-
-.auth-form input {
-  padding: 0.45rem 0.6rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-primary);
-}
-
-.auth-form input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.auth-switch {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.auth-switch button {
-  background: none;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.8rem;
-}
-
-.auth-switch button:hover {
-  text-decoration: underline;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(12, 22, 38, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 0.9rem 1.2rem;
-  font-size: 0.9rem;
-}
-
-.user-info strong {
-  color: var(--accent);
-}
-
-.secondary {
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.secondary:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.hidden {
-  display: none !important;
-}
-
 
 .layout {
   display: grid;
@@ -185,28 +75,6 @@ body {
   font-size: 1.2rem;
   font-weight: 600;
 }
-
-
-.stock-search {
-  margin-bottom: 0.75rem;
-}
-
-.stock-search input {
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stock-search input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
-}
-
 
 .stock-list table,
 .portfolio-table {
@@ -237,14 +105,6 @@ body {
 .stock-list tbody tr.selected {
   background: rgba(255, 77, 79, 0.15);
 }
-
-
-.stock-list tbody tr.empty td {
-  padding: 1.2rem 0;
-  text-align: center;
-  color: var(--text-secondary);
-}
-
 
 .stock-list tbody td,
 .portfolio-table tbody td {
@@ -280,21 +140,6 @@ body {
   gap: 0.75rem;
 }
 
-
-#trade-fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-#trade-fieldset:disabled {
-  opacity: 0.6;
-}
-
-
 .trade-panel label {
   display: flex;
   flex-direction: column;
@@ -328,19 +173,6 @@ body {
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-
-
-.auth-form .primary {
-  width: 100%;
-  margin-top: 0.4rem;
-}
-
-.auth-hint {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
 
 .trade-panel .primary:hover {
   transform: translateY(-1px);
@@ -410,24 +242,4 @@ body {
   .chart-panel canvas {
     height: 300px !important;
   }
-  .app-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .auth-container {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .auth-form {
-    width: 100%;
-  }
-
-  .user-info {
-    width: 100%;
-    justify-content: space-between;
-  }
-
 }

@@ -1,5 +1,6 @@
 const state = {
   userId: null,
+
   username: null,
   sessionToken: null,
   stocks: [],
@@ -309,10 +310,12 @@ function connectWebSocket() {
   const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
   const ws = new WebSocket(`${protocol}://${location.host}/ws/quotes`);
   state.ws = ws;
+
   ws.addEventListener('message', (event) => {
     const payload = JSON.parse(event.data);
     handleMarketUpdate(payload);
   });
+
   ws.addEventListener('close', () => {
     state.ws = null;
     if (state.reconnectTimer) {
@@ -381,12 +384,14 @@ function resetPortfolio() {
     feedback.textContent = '';
     feedback.classList.remove('error', 'success');
   }
+
 }
 
 function handleMarketUpdate(snapshot) {
   if (!snapshot || !snapshot.stocks) return;
   state.stocks = snapshot.stocks;
   updateMarketStatus(snapshot.market_status);
+
   const filtered = getFilteredStocks();
   if (
     !state.selectedSymbol ||
@@ -410,6 +415,7 @@ function handleMarketUpdate(snapshot) {
     state.chart.data.datasets[0].data = [];
     state.chart.update('none');
     document.getElementById('chart-title').textContent = '走势';
+
   }
 }
 
@@ -435,6 +441,7 @@ function formatCountdown(seconds) {
 function updateStockTable() {
   const tbody = document.getElementById('stock-table');
   tbody.innerHTML = '';
+
   const stocks = getFilteredStocks();
   if (stocks.length === 0) {
     if (state.stocks.length === 0) {
@@ -450,6 +457,7 @@ function updateStockTable() {
     return;
   }
   stocks.forEach((stock) => {
+
     const tr = document.createElement('tr');
     tr.dataset.symbol = stock.symbol;
     tr.addEventListener('click', () => selectStock(stock.symbol));
@@ -483,9 +491,11 @@ function updateSymbolOptions() {
   if (prevValue && state.stocks.some((stock) => stock.symbol === prevValue)) {
     select.value = prevValue;
   } else if (state.stocks.length > 0) {
+
     const fallback = state.stocks[0].symbol;
     select.value = fallback;
     state.selectedSymbol = fallback;
+
   }
 }
 
@@ -568,6 +578,7 @@ function updateChart(symbol) {
     state.chart.update('none');
   }
 }
+
 
 function setupTradeForm() {
   const form = document.getElementById('trade-form');
@@ -665,6 +676,7 @@ function setTradeFormDisabled(disabled) {
   if (notice) {
     notice.classList.toggle('hidden', !disabled);
   }
+
 }
 
 function formatTimestamp(timestamp) {
@@ -677,3 +689,4 @@ function formatTimestamp(timestamp) {
   const ss = String(date.getSeconds()).padStart(2, '0');
   return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
+

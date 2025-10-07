@@ -5,5 +5,4 @@ __pycache__/
 .env
 .venv/
 *.sqlite3
-
 .DS_Store

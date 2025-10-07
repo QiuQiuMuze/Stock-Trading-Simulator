@@ -11,6 +11,7 @@
   </head>
   <body>
     <header class="app-header">
+
       <div class="header-main">
         <h1>中国股市模拟交易平台</h1>
         <div class="market-status" id="market-status">
@@ -59,12 +60,14 @@
           <span>欢迎，<strong id="user-name"></strong></span>
           <button type="button" class="secondary" id="logout-btn">退出登录</button>
         </div>
+
       </div>
     </header>
 
     <main class="layout">
       <section class="panel stock-list">
         <h2>行情中心</h2>
+
         <div class="stock-search">
           <input
             type="search"
@@ -73,6 +76,7 @@
             aria-label="搜索股票代码或名称"
           />
         </div>
+
         <table>
           <thead>
             <tr>
@@ -96,6 +100,7 @@
       <section class="panel trade-panel">
         <h2>交易面板</h2>
         <form id="trade-form">
+
           <fieldset id="trade-fieldset">
             <label>
               股票代码
@@ -116,6 +121,7 @@
           </fieldset>
           <p class="form-feedback" id="trade-feedback"></p>
           <p class="auth-hint hidden" id="trade-auth-notice">请先登录或注册后再进行交易。</p>
+
         </form>
 
         <div class="portfolio">

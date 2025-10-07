@@ -2,12 +2,15 @@ import asyncio
 import contextlib
 from typing import Optional
 
+
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, WebSocket, WebSocketDisconnect, status
 from fastapi.responses import HTMLResponse, Response
+
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .market import Market
+
 from .models import AuthRequest, AuthResponse, MarketSnapshot, PortfolioView, TradeRequest, TradeResponse
 from .storage import AuthenticationError, Storage, UserAlreadyExists
 
@@ -17,6 +20,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 storage = Storage()
 market = Market(storage=storage)
+
 
 
 @app.on_event("startup")
@@ -32,6 +36,7 @@ async def on_shutdown() -> None:
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 
 async def get_current_session(x_session_token: Optional[str] = Header(default=None)) -> tuple[str, str]:
@@ -88,15 +93,19 @@ async def list_stocks() -> MarketSnapshot:
 
 
 @app.get("/api/portfolio", response_model=PortfolioView)
+
 async def get_portfolio(session: tuple[str, str] = Depends(get_current_session)) -> PortfolioView:
     user_id, _ = session
+
     return PortfolioView.parse_obj(market.portfolio_view(user_id))
 
 
 @app.post("/api/trade", response_model=TradeResponse)
+
 async def trade(request: TradeRequest, session: tuple[str, str] = Depends(get_current_session)) -> TradeResponse:
     try:
         user_id, _ = session
+
         result = market.execute_trade(user_id=user_id, symbol=request.symbol, quantity=request.quantity, side=request.side)
         return TradeResponse.parse_obj(result)
     except ValueError as exc:  # business rule violation
@@ -132,8 +141,10 @@ async def _consume(queue: asyncio.Queue, websocket: WebSocket) -> None:
         return
 
 
+
 @app.post("/api/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(session: tuple[str, str] = Depends(get_current_session)) -> Response:
     _, token = session
     storage.delete_session(token)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
