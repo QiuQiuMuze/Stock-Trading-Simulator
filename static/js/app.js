@@ -514,9 +514,8 @@ function updateDetailChart(stock) {
   const data = stock.history.map((point) => point.price);
   const minPrice = Math.min(...data);
   const maxPrice = Math.max(...data);
-  const rawRange = maxPrice - minPrice;
-  const baseRange = Math.max(rawRange, maxPrice * 0.002, 0.05);
-  const padding = baseRange * 0.12;
+  const range = maxPrice - minPrice;
+  const padding = range === 0 ? Math.max(maxPrice * 0.02, 0.5) : range * 0.08;
   const suggestedMin = Math.max(0, minPrice - padding);
   const suggestedMax = maxPrice + padding;
   if (!appState.chart) {
@@ -557,8 +556,6 @@ function updateDetailChart(stock) {
             beginAtZero: false,
             suggestedMin,
             suggestedMax,
-            bounds: 'ticks',
-            grace: '6%',
             ticks: {
               color: '#cbd5f5',
             },
@@ -582,10 +579,13 @@ function updateDetailChart(stock) {
     const yScale = appState.chart.options?.scales?.y;
     if (yScale) {
       yScale.beginAtZero = false;
+      yScale.min = undefined;
+      yScale.max = undefined;
       yScale.suggestedMin = suggestedMin;
       yScale.suggestedMax = suggestedMax;
     }
-    appState.chart.update('resize');
+    appState.chart.resize();
+    appState.chart.update('none');
   }
 }
 

@@ -371,6 +371,9 @@ class Market:
         return account.to_view(self.stocks)
 
     def execute_trade(self, user_id: str, symbol: str, quantity: int, side: str) -> Dict[str, object]:
+        phase = self.clock.phase()
+        if not phase.is_trading:
+            raise ValueError("当前为休市时间，无法进行交易")
         if quantity <= 0:
             raise ValueError("Quantity must be positive")
         if side == "buy" and quantity % 100 != 0:
